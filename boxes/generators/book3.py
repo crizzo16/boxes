@@ -63,13 +63,12 @@ class Book3(Boxes):
             self.corner(360, 2)
             self.moveTo(-1.5*x- c2, -3-t)
         
-        self.moveTo(-(x*.5), 0)
+        
 
     def sidepiece(self, x, h, callback=None, move=None):
         t = self.thickness
         cw = math.pi*0.5*h + 2*x
-        self.moveTo(3.175*2 + 2*h + cw, 0)
-        
+        self.moveTo(cw + 3.175*2, 0)
         self.edges["F"](h, False)
         self.corner(90)
         self.edges["e"](x, False)
