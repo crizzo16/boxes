@@ -14,7 +14,7 @@ class DiceTower(Boxes):
         self.argparser.add_argument("--tray_length", action="store", type=float, default=100, help="The tray has the same width (x) has the tower, but it's own length")
         self.argparser.add_argument("--tray_depth", action="store", type=float, default=50, help="The depth of the tray")
 
-    def side(self, y, h, tl, th, callback=None, move=None):
+    def side(self, y, h, tl, th, t, callback=None, move=None):
         self.edges["F"](y+tl, False)
         self.corner(90)
         self.edges["F"](h, False)
@@ -29,13 +29,30 @@ class DiceTower(Boxes):
         self.corner(90)
 
         #add the holes for the shelves
+        #z = t*math.cos(math.radians(theta))
+        #where theta is the angle of the shelf
+        #that's the extra length added to one side when tilted
+        #w = t*math.sin(math.radians(theta))
+        #that's the extra length added to the bottom
+        #worst added when at 45 deg
+
 
         #bottom shelf
         #calculate degree using
         deg = math.degrees(math.atan(th/y))
-        self.fingerHolesAt(tl, 0, 0.8*math.sqrt(th*th + y*y), deg)
+        bsl = y - t*math.sin(math.pi/4)
+        bst = th - t*math.sin(math.pi/4)
+        bsh = math.sqrt(bsl*bsl + bst*bst)
+        self.fingerHolesAt(tl, 0, bsh, deg)
+        self.moveTo(tl + y, 0)
 
-    def side2(self, y, h, tl, th, callback=None, move=None):
+    def shelves(self, y, x, h, th, t, callback=None, move=None):
+        bsl = y - t*math.sin(math.pi/4)
+        bst = th - t*math.sin(math.pi/4)
+        bsh = math.sqrt(bsl*bsl + bst*bst)
+        self.rectangularWall(x, bsh, edges="efef", move="right")
+
+    def side2(self, y, h, tl, th, t, callback=None, move=None):
         self.edges["F"](y+tl, False)
         self.corner(90)
         self.edges["F"](th, False)
@@ -52,7 +69,7 @@ class DiceTower(Boxes):
 
 
     def render(self):
-        x, y, h, tl, th = self.x, self.y, self.h, self.tray_length, self.tray_depth
+        x, y, h, tl, th, t = self.x, self.y, self.h, self.tray_length, self.tray_depth, self.thickness
         
 
         # The base 
@@ -65,7 +82,8 @@ class DiceTower(Boxes):
         self.rectangularWall(x, h-th, edges="efef", move="right")
 
         # The side walls
-        self.side(y, h, tl, th, move="right")
-        #self.side2(y, h, tl, th, move="right")
+        self.side(y, h, tl, th, t, move="right")
+        self.shelves(y, x, h, th, t, move="right")
+        #self.side2(y, h, tl, th, t, move="right")
 
        
