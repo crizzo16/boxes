@@ -17,22 +17,11 @@ class Book3(Boxes):
         )
 
     def cover(self, x, y, h, hole, move=None):
-        r = 0.5
+        # Some code is modified Folder code
         t = self.thickness
         c2 = math.pi * h * 0.5
+        # 3.175 mm = 0.125 in
         self.moveTo(3.175, 2*t)
-        #self.edge(x)
-        #self.edges["X"](c2, y)
-        #self.edges["F"](x, False)
-        #self.corner(90)
-        #self.edges["F"](y, False)
-        #self.corner(90)
-        #self.edges["F"](x, False)
-        #self.edge(x + c2) 
-        #self.corner(90)
-        #self.edge(y)
-        #self.corner(90)
-
         self.edges["F"](x, False)
         self.edges["X"](c2, y)
         self.edge(x)
@@ -45,7 +34,7 @@ class Book3(Boxes):
         self.edges["F"](y, False)
         self.corner(90)
         
-        #if (self.hole == "top lid")
+        # Choose where to put closure pieces
         if hole == "bottom base":
             self.moveTo(0.5*x, 3+t)
             self.corner(360, 2)
@@ -92,8 +81,6 @@ class Book3(Boxes):
     def render(self):
         x, y, h, t, hole = self.x, self.y, self.h, self.thickness, self.hole
 
-        
-        #self.rectangularWall(self.y, self.h, edges="ffef", move="right")
         self.rectangularWall(h, y, edges="feff", move="right")
         self.cover(x, y, h, hole, move="right")
         self.sidepiece(x, h, callback=None, move="right")
