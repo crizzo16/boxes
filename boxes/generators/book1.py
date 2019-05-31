@@ -14,11 +14,8 @@ class Book1(Boxes):
         self.argparser.set_defaults(x=110.0,y=160.0,h=30.0)
         self.argparser.add_argument("--e_width", action="store", type=float, default=8, help="the width of the elastic you're using")
         self.argparser.add_argument("--closure", action="store", type=str, default="default (none)", choices=("default (none)", "elastic band", "wrap string"), help="Various closure option for box. Some require outside materials, such as elastic or string.")
-    
-    #def sidepieces(self, x, h, r, callback=None, move=None):
-     #   self.moveTo(10, 15)
-      #  self.edge(x - r)
 
+    # Book Cover
     def cover(self, x, y, h, move=None):
         r = 0.5
         c2 = math.pi * h * 0.5
@@ -34,10 +31,12 @@ class Book1(Boxes):
         self.corner(90, r)
         self.edge(y - 2 * r)
         self.corner(90,r)
+        # Add the holes for the sides
         self.fingerHolesAt(5, 5 + 0.5*t, x-5, 0)
         self.fingerHolesAt(5 + 0.5*t, 5+t, y-10-2*t, 90)
         self.fingerHolesAt(5, y - 5 - 0.5*t, x-5, 0)
 
+    # Sidepiece with cured end to fit the hinge
     def sidepiece(self, x, h, callback=None, move=None):
         c2 = math.pi * h * 0.5
         t = self.thickness
@@ -50,6 +49,7 @@ class Book1(Boxes):
         self.edges["e"](x-5, False)
         self.corner(180, h/2)
 
+    # Opposite to the one above. There were problems with mirroring
     def opposite(self, x, h, callback=None, move=None):
         t = self.thickness
         self.moveTo(-h/2, h + 2*t)
@@ -59,6 +59,8 @@ class Book1(Boxes):
         self.corner(90)
         self.edges["F"](h, False)
     
+    # Allow users to choose how to close the book
+    # Simple closures only
     def closurechoice(self, x, y, t, close, callback=None, move=None):
         if close=="elastic band":
             # draw holes in correct spot
@@ -70,13 +72,6 @@ class Book1(Boxes):
             # self.circle(xpos, ypos, rad)
             self.circle(0.5*x, 10+t, 2)
             # move back to origin point
-
-    def elasticHole(self, x, y, callback=None, move=None):
-        t = self.thickness
-        self.rectangularHole(15+t, t + 8, 8, 1)
-        self.rectangularHole(t+15, y-t-8, 8, 1)
-        #(x, y, dx, dy)
-
 
     def render(self):
         x, y, h, t, close = self.x, self.y, self.h, self.thickness, self.closure
