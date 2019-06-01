@@ -43,8 +43,8 @@ class DiceTower(Boxes):
         bsl = y - t*math.sin(math.pi/4)
         bst = th - t*math.sin(math.pi/4)
         bsh = math.sqrt(bsl*bsl + bst*bst)
-        self.fingerHolesAt(tl, 0, bsh, deg)
-        self.moveTo(tl + y, 0)
+        self.fingerHolesAt(tl, t, bsh, deg)
+        self.moveTo(tl + y + 3.175, 0)
 
     def shelves(self, y, x, h, th, t, callback=None, move=None):
         bsl = y - t*math.sin(math.pi/4)
