@@ -48,26 +48,40 @@ class DiceTower(Boxes):
         self.fingerHolesAt(tl, t, bsh, deg)
         self.moveTo(0, 0)
 
+        sh = 30 # shelf height (each shelf's alloted height space)
+        so = 0.55 # shelf overhang (percent of y)
+
         hr = h-th
-        lvls = hr//20
-        left = (hr/20)-lvls
+        lvls = hr//sh
+        left = (hr/sh)-lvls
         # These shelves extend 55% over depth of dice tower
-        ang = math.degrees(math.atan(20/(0.55*y)))
+        ang = math.degrees(math.atan(sh/(so*y)))
+        shadow = math.sqrt(so*so*y*y-sh*sh)
+        #shadow = 0.5*(80-2*t)
+
         for i in range(int(lvls)):
             # use i to determine which way it going
             # goes from 0 to lvls-1
             # use modulo % to calc if even or odd
             # even downhill \, odd uphill /
             # self.fingerHolesAt(xpos, ypos, length, deg)
-            
-            # Downhill \
+            #ang=0
+            # Downhill \, -ang
             if (i%2)==0:
-                self.fingerHolesAt(tl, th+t+20*i, 0.55*y, -ang)
-                self.moveTo(0,0)
-            # Uphill /
+                self.fingerHolesAt(tl+t, th+t+sh*(i+1), so*y, -ang)
+                self.moveTo(tl+t, th+sh*i)
+                self.edges["e"](shadow, False)
+                self.moveTo(-t-tl-shadow, -th-sh*i)
+            # Uphill /, ang
             else:
-                self.fingerHolesAt(tl+0.55*y, th+t+20*i, 0.55*y, ang)
-        
+                self.fingerHolesAt(tl+(1-so)*y-t, th+t+sh*i, so*y, ang)
+                self.moveTo(tl+(y-shadow)-t, th+sh*i)
+                self.edges["e"](shadow, False)
+                self.moveTo(-tl-shadow-(y-shadow)+t, -th-sh*i)
+        self.moveTo(tl+t, th+sh*lvls)
+        self.edges["e"](shadow, False)
+        self.moveTo(-t-tl-shadow, -th-sh*lvls)
+                
 
     def shelves(self, y, x, h, th, t, callback=None, move=None):
         bsl = y - t*math.sin(math.pi/4)
