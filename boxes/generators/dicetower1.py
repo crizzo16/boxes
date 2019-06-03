@@ -40,18 +40,43 @@ class DiceTower(Boxes):
         #bottom shelf
         #calculate degree using
         deg = math.degrees(math.atan(th/y))
+        # calculate bottom shelf length
         bsl = y - t*math.sin(math.pi/4)
         bst = th - t*math.sin(math.pi/4)
+        # Calculate 
         bsh = math.sqrt(bsl*bsl + bst*bst)
         self.fingerHolesAt(tl, t, bsh, deg)
-        self.moveTo(tl + y + 3.175, 0)
+        self.moveTo(0, 0)
+
+        hr = h-th
+        lvls = hr//20
+        left = (hr/20)-lvls
+        # These shelves extend 55% over depth of dice tower
+        ang = math.degrees(math.atan(20/(0.55*y)))
+        for i in range(int(lvls)):
+            # use i to determine which way it going
+            # goes from 0 to lvls-1
+            # use modulo % to calc if even or odd
+            # even downhill \, odd uphill /
+            # self.fingerHolesAt(xpos, ypos, length, deg)
+            
+            # Downhill \
+            if (i%2)==0:
+                self.fingerHolesAt(tl, th+t+20*i, 0.55*y, -ang)
+                self.moveTo(0,0)
+            # Uphill /
+            else:
+                self.fingerHolesAt(tl+0.55*y, th+t+20*i, 0.55*y, ang)
+        
 
     def shelves(self, y, x, h, th, t, callback=None, move=None):
         bsl = y - t*math.sin(math.pi/4)
         bst = th - t*math.sin(math.pi/4)
         bsh = math.sqrt(bsl*bsl + bst*bst)
         self.rectangularWall(x, bsh, edges="efef", move="right")
+        
 
+            
     def side2(self, y, h, tl, th, t, callback=None, move=None):
         self.edges["F"](y+tl, False)
         self.corner(90)
@@ -83,7 +108,7 @@ class DiceTower(Boxes):
 
         # The side walls
         self.side(y, h, tl, th, t, move="right")
-        self.shelves(y, x, h, th, t, move="right")
+        #self.shelves(y, x, h, th, t, move="right")
         #self.side2(y, h, tl, th, t, move="right")
 
        
