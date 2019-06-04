@@ -36,18 +36,26 @@ class DiceTower(Boxes):
         #that's the extra length added to the bottom
         #worst added when at 45 deg
 
-
-        #bottom shelf
+        ################
+        # bottom shelf #
+        ################
+        #box showing space
+        
         #calculate degree using
-        deg = math.degrees(math.atan(th/y))
-        # calculate bottom shelf length
-        bsl = y - t*math.sin(math.pi/4)
-        bst = th - t*math.sin(math.pi/4)
-        # Calculate 
+        bsb = th*0.8
+        deg = math.degrees(math.atan(bsb/(y-t)))
+        extra = t*math.sin(math.pi/4)
+        # calculate the bottom part of the triangle
+        bsl = y-2*extra-2*t
+        # calculate the side part of the triangle
+        bst = th-2*extra
+        # Calculate the hypotenuese of the the triangle (length of the piece)
         bsh = math.sqrt(bsl*bsl + bst*bst)
-        self.fingerHolesAt(tl, t, bsh, deg)
-        self.moveTo(0, 0)
-
+        self.fingerHolesAt(tl+t, t+extra*2, bsh, deg)
+        
+        ###########
+        # Shelves #
+        ###########
         sh = 30 # shelf height (each shelf's alloted height space)
         so = 0.55 # shelf overhang (percent of y)
 
@@ -55,9 +63,10 @@ class DiceTower(Boxes):
         lvls = hr//sh
         left = (hr/sh)-lvls
         # These shelves extend 55% over depth of dice tower
-        ang = math.degrees(math.atan(sh/(so*y)))
         shadow = math.sqrt(so*so*y*y-sh*sh)
+        ang = math.degrees(math.atan(sh/shadow))
         #shadow = 0.5*(80-2*t)
+        #shadow = so*y
 
         for i in range(int(lvls)):
             # use i to determine which way it going
@@ -68,26 +77,53 @@ class DiceTower(Boxes):
             #ang=0
             # Downhill \, -ang
             if (i%2)==0:
-                self.fingerHolesAt(tl+t, th+t+sh*(i+1), so*y, -ang)
-                self.moveTo(tl+t, th+sh*i)
-                self.edges["e"](shadow, False)
-                self.moveTo(-t-tl-shadow, -th-sh*i)
+                self.fingerHolesAt(tl+t, th+sh*(i+1)+t, so*y, -ang)
+                #  self.moveTo(tl+t, th+sh*i)
+                # self.edges["e"](shadow, False)
+                #self.moveTo(-t-tl-shadow, -th-sh*i)
+                self.moveTo(tl+t, th+i*sh)
+                self.rectangularWall(shadow, sh, edges="eeee")
+                self.moveTo(0, sh)
+                self.corner(-ang)
+                self.rectangularWall(so*y, t, edges="eeee")
+                self.corner(ang)
+                self.moveTo(-tl-t, -th-i*sh-sh)
             # Uphill /, ang
             else:
-                self.fingerHolesAt(tl+(1-so)*y-t, th+t+sh*i, so*y, ang)
-                self.moveTo(tl+(y-shadow)-t, th+sh*i)
-                self.edges["e"](shadow, False)
-                self.moveTo(-tl-shadow-(y-shadow)+t, -th-sh*i)
-        self.moveTo(tl+t, th+sh*lvls)
-        self.edges["e"](shadow, False)
-        self.moveTo(-t-tl-shadow, -th-sh*lvls)
+                self.fingerHolesAt(tl+(y-shadow-t-1), th+t+sh*i, so*y, ang)
+                #   self.moveTo(tl+(y-shadow)-t, th+sh*i)
+                # self.edges["e"](shadow, False)
+                #self.moveTo(-tl-shadow-(y-shadow)+t, -th-sh*i)
+                self.moveTo(tl+t+(y-shadow-2*t-1), th+i*sh)
+                self.rectangularWall(shadow, sh, edges="eeee")
+                self.corner(ang)
+                self.rectangularWall(so*y, t, edges="eeee")
+                self.corner(-ang)
+                self.moveTo(-tl-t-y+shadow+2*t+1, -th-i*sh)
+        #self.moveTo(tl+t, th+sh*lvls)
+        #self.edges["e"](shadow, False)
+        #self.moveTo(-t-tl-shadow, -th-sh*lvls)
                 
 
-    def shelves(self, y, x, h, th, t, callback=None, move=None):
-        bsl = y - t*math.sin(math.pi/4)
-        bst = th - t*math.sin(math.pi/4)
+    def shelves(self, y, x, h, th, t, tl, callback=None, move=None):
+        self.moveTo(y+tl)
+        # Bottom Shelf
+        bsb = th*0.8
+        deg = math.degrees(math.atan(bsb/(y-t)))
+        extra = t*math.sin(math.pi/4)
+        # calculate the bottom part of the triangle
+        bsl = y-2*extra-2*t
+        # calculate the side part of the triangle
+        bst = th-2*extra
         bsh = math.sqrt(bsl*bsl + bst*bst)
         self.rectangularWall(x, bsh, edges="efef", move="right")
+
+        ## Other Shelves
+        amt = (h-th)//30
+        hgt = 0
+        for i in range(int(amt)):
+            self.rectangularWall(x, 0.55*y, edges="efef", move="up")
+                
         
 
             
@@ -122,7 +158,7 @@ class DiceTower(Boxes):
 
         # The side walls
         self.side(y, h, tl, th, t, move="right")
-        #self.shelves(y, x, h, th, t, move="right")
+        self.shelves(y, x, h, th, t, tl, move="right")
         #self.side2(y, h, tl, th, t, move="right")
 
        
